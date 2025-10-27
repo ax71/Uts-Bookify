@@ -1,98 +1,265 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import { Category } from "@/type";
+import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
+import { useState } from "react";
+import {
+  RefreshControl,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  useColorScheme,
+  View,
+} from "react-native";
+import BookCard from "../../components/BookCard";
+import { useBookStore } from "../../store/bookStore";
 
-import { HelloWave } from '@/components/hello-wave';
-import ParallaxScrollView from '@/components/parallax-scroll-view';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { Link } from 'expo-router';
+const categories: Category[] = [
+  "All",
+  "Child",
+  "Humanities",
+  "Education",
+  "Science",
+  "Fiction",
+  "Technology",
+];
 
 export default function HomeScreen() {
-  return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <Link href="/modal">
-          <Link.Trigger>
-            <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-          </Link.Trigger>
-          <Link.Preview />
-          <Link.Menu>
-            <Link.MenuAction title="Action" icon="cube" onPress={() => alert('Action pressed')} />
-            <Link.MenuAction
-              title="Share"
-              icon="square.and.arrow.up"
-              onPress={() => alert('Share pressed')}
-            />
-            <Link.Menu title="More" icon="ellipsis">
-              <Link.MenuAction
-                title="Delete"
-                icon="trash"
-                destructive
-                onPress={() => alert('Delete pressed')}
-              />
-            </Link.Menu>
-          </Link.Menu>
-        </Link>
+  const router = useRouter();
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === "dark";
 
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+  const books = useBookStore((state) => state.books);
+  const initializeBooks = useBookStore((state) => state.initializeBooks);
+  const [selectedCategory, setSelectedCategory] = useState<Category>("All");
+  const [refreshing, setRefreshing] = useState(false);
+
+  const filteredBooks =
+    selectedCategory === "All"
+      ? books
+      : books.filter((book) => book.category === selectedCategory);
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await initializeBooks();
+    setRefreshing(false);
+  };
+
+  return (
+    <View style={[styles.container, isDark && styles.containerDark]}>
+      {/* Header */}
+      <View style={[styles.header, isDark && styles.headerDark]}>
+        <View>
+          <Text style={[styles.greeting, isDark && styles.textDark]}>
+            ENJOY READING
+          </Text>
+          <Text style={[styles.subtitle, isDark && styles.textSecondaryDark]}>
+            Discover your next great book
+          </Text>
+        </View>
+        <TouchableOpacity
+          style={[styles.addButton, isDark && styles.addButtonDark]}
+          onPress={() => router.push("/book/add")}
+        >
+          <Ionicons
+            name="add"
+            size={24}
+            color={isDark ? "#FFD700" : "#FF6B35"}
+          />
+        </TouchableOpacity>
+      </View>
+
+      {/* Categories */}
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        style={styles.categoriesContainer}
+        contentContainerStyle={styles.categoriesContent}
+      >
+        {categories.map((category) => (
+          <TouchableOpacity
+            key={category}
+            style={[
+              styles.categoryChip,
+              selectedCategory === category && styles.categoryChipActive,
+              isDark && styles.categoryChipDark,
+              selectedCategory === category &&
+                isDark &&
+                styles.categoryChipActiveDark,
+            ]}
+            onPress={() => setSelectedCategory(category)}
+          >
+            <Text
+              style={[
+                styles.categoryText,
+                selectedCategory === category && styles.categoryTextActive,
+                isDark && styles.categoryTextDark,
+                selectedCategory === category &&
+                  isDark &&
+                  styles.categoryTextActiveDark,
+              ]}
+            >
+              {category}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </ScrollView>
+
+      {/* Books List */}
+      <ScrollView
+        style={styles.booksContainer}
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      >
+        <View style={styles.sectionHeader}>
+          <Text style={[styles.sectionTitle, isDark && styles.textDark]}>
+            {selectedCategory === "All" ? "All Books" : selectedCategory}
+          </Text>
+          <Text style={[styles.bookCount, isDark && styles.textSecondaryDark]}>
+            {filteredBooks.length} books
+          </Text>
+        </View>
+
+        {filteredBooks.length === 0 ? (
+          <View style={styles.emptyState}>
+            <Ionicons
+              name="book-outline"
+              size={64}
+              color={isDark ? "#555" : "#ccc"}
+            />
+            <Text
+              style={[styles.emptyText, isDark && styles.textSecondaryDark]}
+            >
+              No books found in this category
+            </Text>
+          </View>
+        ) : (
+          filteredBooks.map((book) => <BookCard key={book.id} book={book} />)
+        )}
+
+        <View style={styles.bottomPadding} />
+      </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
+  container: {
+    flex: 1,
+    backgroundColor: "#f5f5f5",
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+  containerDark: {
+    backgroundColor: "#121212",
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  header: {
+    backgroundColor: "#fff",
+    padding: 20,
+    paddingTop: 60,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  headerDark: {
+    backgroundColor: "#1a1a1a",
+  },
+  greeting: {
+    fontSize: 28,
+    fontWeight: "bold",
+    color: "#000",
+  },
+  textDark: {
+    color: "#fff",
+  },
+  subtitle: {
+    fontSize: 14,
+    color: "#666",
+    marginTop: 4,
+  },
+  textSecondaryDark: {
+    color: "#aaa",
+  },
+  addButton: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: "#FFE8E0",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  addButtonDark: {
+    backgroundColor: "#2a2a2a",
+  },
+  categoriesContainer: {
+    maxHeight: 60,
+    backgroundColor: "#fff",
+  },
+  categoriesContent: {
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+  },
+  categoryChip: {
+    paddingHorizontal: 20,
+    paddingVertical: 8,
+    borderRadius: 20,
+    backgroundColor: "#f0f0f0",
+    marginRight: 8,
+  },
+  categoryChipDark: {
+    backgroundColor: "#2a2a2a",
+  },
+  categoryChipActive: {
+    backgroundColor: "#FF6B35",
+  },
+  categoryChipActiveDark: {
+    backgroundColor: "#FFD700",
+  },
+  categoryText: {
+    fontSize: 14,
+    color: "#666",
+  },
+  categoryTextDark: {
+    color: "#aaa",
+  },
+  categoryTextActive: {
+    color: "#fff",
+    fontWeight: "600",
+  },
+  categoryTextActiveDark: {
+    color: "#000",
+    fontWeight: "600",
+  },
+  booksContainer: {
+    flex: 1,
+    padding: 16,
+  },
+  sectionHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 16,
+  },
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#000",
+  },
+  bookCount: {
+    fontSize: 14,
+    color: "#666",
+  },
+  emptyState: {
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 60,
+  },
+  emptyText: {
+    fontSize: 16,
+    color: "#999",
+    marginTop: 16,
+  },
+  bottomPadding: {
+    height: 20,
   },
 });

@@ -4,7 +4,7 @@
     "slug": "bookify-v4",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/icon.png",
     "scheme": "bookifyv4",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
