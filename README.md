@@ -1,50 +1,109 @@
-# Welcome to your Expo app 👋
+# 📚 Bookify - Aplikasi Mobile Toko Buku
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Bookify adalah aplikasi mobile toko buku yang dikembangkan menggunakan React Native dan Expo. Aplikasi ini memungkinkan pengguna untuk menjelajahi, mencari, dan membeli buku secara online, serta mendukung mode gelap (dark mode) yang menyesuaikan dengan tema perangkat pengguna.
 
-## Get started
+## 🚀 Fitur Utama
 
-1. Install dependencies
+- **Katalog Buku**: Jelajahi berbagai buku dengan tampilan yang menarik
+- **Pencarian**: Cari buku berdasarkan judul, penulis, atau kategori
+- **Detail Buku**: Lihat informasi lengkap tentang buku
+- **Keranjang Belanja**: Tambahkan buku ke keranjang dan kelola pembelian
+- **Profil Pengguna**: Kelola informasi profil dan riwayat transaksi
+- **Mode Gelap/Terang**: Dukungan tema gelap dan terang
+
+## 🛠️ Teknologi yang Digunakan
+
+- **React Native**: Framework untuk pengembangan aplikasi mobile
+- **Expo**: Platform untuk membangun dan men-deploy aplikasi React Native
+- **Expo Router**: Navigasi berbasis file untuk aplikasi Expo
+- **Zustand**: Manajemen state yang ringan dan efisien
+- **React Native Paper**: Komponen UI Material Design
+- **AsyncStorage**: Penyimpanan data lokal
+
+## 📋 Prasyarat
+
+- Node.js (versi 16 atau lebih baru)
+- npm atau yarn
+- Expo CLI
+- Emulator Android/iOS atau perangkat fisik
+
+## 🔧 Instalasi
+
+1. Clone repositori ini
+
+   ```bash
+   git clone <url-repositori>
+   cd bookify-v4
+   ```
+
+2. Instal dependensi
 
    ```bash
    npm install
+   # atau
+   yarn install
    ```
 
-2. Start the app
+3. Jalankan aplikasi
 
    ```bash
-   npx expo start
+   npm start
+   # atau
+   yarn start
    ```
 
-In the output, you'll find options to open the app in a
+4. Pilih platform untuk menjalankan aplikasi:
+   - Tekan `a` untuk Android
+   - Tekan `i` untuk iOS
+   - Tekan `w` untuk web
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+## 📱 Struktur Aplikasi
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+```
+bookify-v4/
+├── app/                   # Direktori utama aplikasi (Expo Router)
+│   ├── (tabs)/            # Tab navigasi utama
+│   ├── book/              # Halaman detail, tambah, dan edit buku
+│   └── transactions.tsx   # Halaman transaksi
+├── assets/                # Gambar dan aset lainnya
+├── components/            # Komponen yang dapat digunakan kembali
+├── constants/             # Konstanta aplikasi
+├── hooks/                 # Custom hooks
+├── store/                 # State management (Zustand)
+├── type/                  # Type definitions
+└── utils/                 # Fungsi utilitas
+```
 
-## Get a fresh project
+## 🧩 Komponen Utama
 
-When you're ready, run:
+- **BookCard**: Menampilkan informasi buku dalam format kartu
+
+## 🖼️ Preview
+
+![Preview Home-light](assets/images/home-light.png)
+![Preview Home-dark](assets/images/home-dark.png)
+![Preview Search](assets/images/search-page.jpeg)
+![Preview Cart](assets/images/cart-page.jpeg)
+![Preview Book Detail](assets/images/book-details-page.jpeg)
+![Preview Add Book](assets/images/add-book-form.jpeg)
+![Preview Edit Book](assets/images/edit-book-form.jpeg)
+![Preview Delete Book](assets/images/delete-book.jpeg)
+![Preview Transaction](assets/images/transaction-page.jpeg)
+![Preview Profile](assets/images/profile-1.jpeg)
+![Preview Profile](assets/images/profile-2.jpeg)
+
+## 📝 Pengembangan
+
+Untuk reset proyek ke kondisi awal:
 
 ```bash
 npm run reset-project
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+## 📄 Lisensi
 
-## Learn more
+[MIT License](LICENSE)
 
-To learn more about developing your project with Expo, look at the following resources:
+---
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+Dibuat oleh Buktiasa untuk Kuliah Pemrograman Mobile
