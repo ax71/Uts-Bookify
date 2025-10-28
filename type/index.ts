@@ -24,11 +24,4 @@ export interface Transaction {
   date: string;
 }
 
-export type Category =
-  | "All"
-  | "Child"
-  | "Humanities"
-  | "Education"
-  | "Science"
-  | "Fiction"
-  | "Technology";
+export type Category = "All" | "Child" | "Education" | "Technology";

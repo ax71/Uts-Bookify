@@ -1,9 +1,11 @@
 import { Category } from "@/type";
 import { Ionicons } from "@expo/vector-icons";
+import * as ImagePicker from "expo-image-picker";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import {
   Alert,
+  Image,
   ScrollView,
   StyleSheet,
   Text,
@@ -14,14 +16,7 @@ import {
 } from "react-native";
 import { useBookStore } from "../../../store/bookStore";
 
-const categories: Category[] = [
-  "Child",
-  "Humanities",
-  "Education",
-  "Science",
-  "Fiction",
-  "Technology",
-];
+const categories: Category[] = ["Child", "Education", "Technology"];
 
 export default function EditBookScreen() {
   const { id } = useLocalSearchParams();
@@ -81,6 +76,30 @@ export default function EditBookScreen() {
     );
   }
 
+  const pickImage = async () => {
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+    if (status !== "granted") {
+      Alert.alert(
+        "Permission Denied",
+        "Sorry, we need camera roll permissions to upload images."
+      );
+      return;
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [3, 4],
+      quality: 0.8,
+    });
+
+    if (!result.canceled) {
+      setFormData({ ...formData, coverUrl: result.assets[0].uri });
+      if (errors.coverUrl) setErrors({ ...errors, coverUrl: "" });
+    }
+  };
+
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
@@ -88,7 +107,8 @@ export default function EditBookScreen() {
     if (!formData.author.trim()) newErrors.author = "Author is required";
     if (!formData.price || parseFloat(formData.price) <= 0)
       newErrors.price = "Valid price is required";
-    if (!formData.coverUrl.trim()) newErrors.coverUrl = "Cover URL is required";
+    if (!formData.coverUrl.trim())
+      newErrors.coverUrl = "Cover image is required";
     if (!formData.description.trim())
       newErrors.description = "Description is required";
     if (!formData.stock || parseInt(formData.stock) < 0)
@@ -129,6 +149,62 @@ export default function EditBookScreen() {
   return (
     <View style={[styles.container, isDark && styles.containerDark]}>
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+        {/* Cover Image Picker */}
+        <View style={styles.formGroup}>
+          <Text style={[styles.label, isDark && styles.labelDark]}>
+            Cover Image *
+          </Text>
+
+          <TouchableOpacity
+            style={[
+              styles.imagePicker,
+              isDark && styles.imagePickerDark,
+              errors.coverUrl && styles.inputError,
+            ]}
+            onPress={pickImage}
+          >
+            {formData.coverUrl ? (
+              <View style={styles.imagePreviewContainer}>
+                <Image
+                  source={{ uri: formData.coverUrl }}
+                  style={styles.imagePreview}
+                />
+                <View style={styles.changeImageOverlay}>
+                  <Ionicons name="camera" size={24} color="#fff" />
+                  <Text style={styles.changeImageText}>Change Image</Text>
+                </View>
+              </View>
+            ) : (
+              <View style={styles.imagePickerContent}>
+                <Ionicons
+                  name="cloud-upload-outline"
+                  size={48}
+                  color={isDark ? "#666" : "#999"}
+                />
+                <Text
+                  style={[
+                    styles.imagePickerText,
+                    isDark && styles.imagePickerTextDark,
+                  ]}
+                >
+                  Tap to upload cover image
+                </Text>
+                <Text
+                  style={[
+                    styles.imagePickerHint,
+                    isDark && styles.imagePickerHintDark,
+                  ]}
+                >
+                  Supports JPG, PNG
+                </Text>
+              </View>
+            )}
+          </TouchableOpacity>
+          {errors.coverUrl && (
+            <Text style={styles.errorText}>{errors.coverUrl}</Text>
+          )}
+        </View>
+
         {/* Title */}
         <View style={styles.formGroup}>
           <Text style={[styles.label, isDark && styles.labelDark]}>
@@ -196,32 +272,6 @@ export default function EditBookScreen() {
             keyboardType="decimal-pad"
           />
           {errors.price && <Text style={styles.errorText}>{errors.price}</Text>}
-        </View>
-
-        {/* Cover URL */}
-        <View style={styles.formGroup}>
-          <Text style={[styles.label, isDark && styles.labelDark]}>
-            Cover Image URL *
-          </Text>
-          <TextInput
-            style={[
-              styles.input,
-              isDark && styles.inputDark,
-              errors.coverUrl && styles.inputError,
-            ]}
-            placeholder="https://example.com/image.jpg"
-            placeholderTextColor={isDark ? "#666" : "#999"}
-            value={formData.coverUrl}
-            onChangeText={(text) => {
-              setFormData({ ...formData, coverUrl: text });
-              if (errors.coverUrl) setErrors({ ...errors, coverUrl: "" });
-            }}
-            autoCapitalize="none"
-            autoCorrect={false}
-          />
-          {errors.coverUrl && (
-            <Text style={styles.errorText}>{errors.coverUrl}</Text>
-          )}
         </View>
 
         {/* Category */}
@@ -359,11 +409,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  errorText: {
-    fontSize: 18,
-    color: "#999",
-    marginTop: 16,
-  },
   textDark: {
     color: "#fff",
   },
@@ -382,6 +427,69 @@ const styles = StyleSheet.create({
   },
   labelDark: {
     color: "#fff",
+  },
+  imagePicker: {
+    backgroundColor: "#fff",
+    borderWidth: 2,
+    borderColor: "#e0e0e0",
+    borderStyle: "dashed",
+    borderRadius: 12,
+    minHeight: 200,
+    justifyContent: "center",
+    alignItems: "center",
+    overflow: "hidden",
+  },
+  imagePickerDark: {
+    backgroundColor: "#2a2a2a",
+    borderColor: "#3a3a3a",
+  },
+  imagePickerContent: {
+    alignItems: "center",
+    padding: 20,
+  },
+  imagePickerText: {
+    fontSize: 16,
+    color: "#666",
+    marginTop: 12,
+    fontWeight: "500",
+  },
+  imagePickerTextDark: {
+    color: "#aaa",
+  },
+  imagePickerHint: {
+    fontSize: 12,
+    color: "#999",
+    marginTop: 4,
+  },
+  imagePickerHintDark: {
+    color: "#666",
+  },
+  imagePreviewContainer: {
+    width: "100%",
+    height: 250,
+    position: "relative",
+  },
+  imagePreview: {
+    width: "100%",
+    height: "100%",
+    resizeMode: "cover",
+  },
+  changeImageOverlay: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: "rgba(0, 0, 0, 0.7)",
+    padding: 12,
+    alignItems: "center",
+    flexDirection: "row",
+    justifyContent: "center",
+    gap: 8,
+  },
+  changeImageText: {
+    color: "#fff",
+    fontSize: 14,
+    fontWeight: "600",
   },
   input: {
     backgroundColor: "#fff",

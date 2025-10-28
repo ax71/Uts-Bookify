@@ -14,15 +14,7 @@ import {
 import BookCard from "../../components/BookCard";
 import { useBookStore } from "../../store/bookStore";
 
-const categories: Category[] = [
-  "All",
-  "Child",
-  "Humanities",
-  "Education",
-  "Science",
-  "Fiction",
-  "Technology",
-];
+const categories: Category[] = ["All", "Child", "Education", "Technology"];
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -51,7 +43,7 @@ export default function HomeScreen() {
       <View style={[styles.header, isDark && styles.headerDark]}>
         <View>
           <Text style={[styles.greeting, isDark && styles.textDark]}>
-            ENJOY READING
+            WELCOME, Bukti!
           </Text>
           <Text style={[styles.subtitle, isDark && styles.textSecondaryDark]}>
             Discover your next great book

@@ -59,9 +59,9 @@ export default function ProfileScreen() {
             />
           </View>
         </View>
-        <Text style={[styles.name, isDark && styles.textDark]}>Book Lover</Text>
+        <Text style={[styles.name, isDark && styles.textDark]}>Buktiasa</Text>
         <Text style={[styles.email, isDark && styles.textSecondaryDark]}>
-          booklover@bookify.com
+          buktiasa@bookify.com
         </Text>
       </View>
 
@@ -206,8 +206,8 @@ export default function ProfileScreen() {
           </View>
         </View>
 
-        {/* Danger Zone */}
-        <View style={styles.section}>
+        {/* Danger Zone * sekarang masih belum diperlukan/}
+        {/* <View style={styles.section}>
           <Text style={[styles.sectionTitle, isDark && styles.textDark]}>
             Danger Zone
           </Text>
@@ -226,21 +226,7 @@ export default function ProfileScreen() {
             </View>
             <Ionicons name="chevron-forward" size={24} color="#ff4444" />
           </TouchableOpacity>
-        </View>
-
-        {/* App Info */}
-        <View style={styles.appInfo}>
-          <Text
-            style={[styles.appInfoText, isDark && styles.textSecondaryDark]}
-          >
-            Bookify v1.0.0
-          </Text>
-          <Text
-            style={[styles.appInfoText, isDark && styles.textSecondaryDark]}
-          >
-            Made with ❤️ for book lovers
-          </Text>
-        </View>
+        </View> */}
 
         <View style={styles.bottomPadding} />
       </ScrollView>
