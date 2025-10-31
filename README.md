@@ -92,6 +92,10 @@ bookify-v4/
 ![Preview Profile](assets/images/profile-1.jpeg)
 ![Preview Profile](assets/images/profile-2.jpeg)
 
+## 🎥 Demo Aplikasi
+
+[![Tonton Demo di Loom](https://cdn.loom.com/sessions/thumbnails/c927dfdd7534435ca4ae91abb38c91ea-with-play.gif)](https://www.loom.com/share/c927dfdd7534435ca4ae91abb38c91ea)
+
 ## 📝 Pengembangan
 
 Untuk reset proyek ke kondisi awal:
