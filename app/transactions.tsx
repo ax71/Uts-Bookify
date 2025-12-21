@@ -65,7 +65,6 @@ export default function TransactionsScreen() {
                 isDark && styles.transactionCardDark,
               ]}
             >
-              {/* Transaction Header */}
               <View style={styles.transactionHeader}>
                 <View style={styles.transactionHeaderLeft}>
                   <Ionicons
@@ -99,12 +98,11 @@ export default function TransactionsScreen() {
                 </Text>
               </View>
 
-              {/* Transaction Items */}
               <View style={styles.itemsList}>
                 {transaction.items.map((item, index) => (
                   <View key={index} style={styles.itemRow}>
                     <Image
-                      source={{ uri: item.book.coverUrl }}
+                      source={{ uri: item.book.cover_url }}
                       style={styles.itemCover}
                     />
                     <View style={styles.itemDetails}>
@@ -141,7 +139,6 @@ export default function TransactionsScreen() {
                 ))}
               </View>
 
-              {/* Transaction Summary */}
               <View
                 style={[
                   styles.transactionSummary,

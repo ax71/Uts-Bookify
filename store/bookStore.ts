@@ -9,7 +9,8 @@ const initialBooks: Book[] = [
     title: "The Giant Kingdom",
     author: "John Smith",
     price: 29.99,
-    coverUrl: "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=400",
+    cover_url:
+      "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=400",
     description: "Extracurricular reading / Growing motivational story book",
     category: "Child",
     stock: 261,
@@ -19,7 +20,7 @@ const initialBooks: Book[] = [
     title: "Bear's Wish",
     author: "Emily Brown",
     price: 24.99,
-    coverUrl:
+    cover_url:
       "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=400",
     description: "Extracurricular reading / Child education story",
     category: "Child",
@@ -30,7 +31,8 @@ const initialBooks: Book[] = [
     title: "Animal Adventures",
     author: "Michael Green",
     price: 34.99,
-    coverUrl: "https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=400",
+    cover_url:
+      "https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=400",
     description: "Extracurricular reading / Growing motivational story book",
     category: "Child",
     stock: 261,

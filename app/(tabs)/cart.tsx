@@ -74,7 +74,6 @@ export default function CartScreen() {
 
   return (
     <View style={[styles.container, isDark && styles.containerDark]}>
-      {/* Header */}
       <View style={[styles.header, isDark && styles.headerDark]}>
         <Text style={[styles.title, isDark && styles.textDark]}>
           Shopping Cart
@@ -120,7 +119,7 @@ export default function CartScreen() {
                 style={[styles.cartItem, isDark && styles.cartItemDark]}
               >
                 <Image
-                  source={{ uri: item.book.coverUrl }}
+                  source={{ uri: item.book.cover_url }}
                   style={styles.bookCover}
                 />
 

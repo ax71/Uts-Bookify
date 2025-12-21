@@ -29,7 +29,7 @@ export default function AddBookScreen() {
     title: "",
     author: "",
     price: "",
-    coverUrl: "",
+    cover_url: "",
     description: "",
     category: "Fiction" as Category,
     stock: "",
@@ -58,8 +58,8 @@ export default function AddBookScreen() {
     });
 
     if (!result.canceled) {
-      setFormData({ ...formData, coverUrl: result.assets[0].uri });
-      if (errors.coverUrl) setErrors({ ...errors, coverUrl: "" });
+      setFormData({ ...formData, cover_url: result.assets[0].uri });
+      if (errors.cover_url) setErrors({ ...errors, cover_url: "" });
     }
   };
 
@@ -70,8 +70,8 @@ export default function AddBookScreen() {
     if (!formData.author.trim()) newErrors.author = "Author is required";
     if (!formData.price || parseFloat(formData.price) <= 0)
       newErrors.price = "Valid price is required";
-    if (!formData.coverUrl.trim())
-      newErrors.coverUrl = "Cover image is required";
+    if (!formData.cover_url.trim())
+      newErrors.cover_url = "Cover image is required";
     if (!formData.description.trim())
       newErrors.description = "Description is required";
     if (!formData.stock || parseInt(formData.stock) < 0)
@@ -95,7 +95,7 @@ export default function AddBookScreen() {
         title: formData.title.trim(),
         author: formData.author.trim(),
         price: parseFloat(formData.price),
-        coverUrl: formData.coverUrl.trim(),
+        cover_url: formData.cover_url.trim(),
         description: formData.description.trim(),
         category: formData.category,
         stock: parseInt(formData.stock),
@@ -122,14 +122,14 @@ export default function AddBookScreen() {
             style={[
               styles.imagePicker,
               isDark && styles.imagePickerDark,
-              errors.coverUrl && styles.inputError,
+              errors.cover_url && styles.inputError,
             ]}
             onPress={pickImage}
           >
-            {formData.coverUrl ? (
+            {formData.cover_url ? (
               <View style={styles.imagePreviewContainer}>
                 <Image
-                  source={{ uri: formData.coverUrl }}
+                  source={{ uri: formData.cover_url }}
                   style={styles.imagePreview}
                 />
                 <View style={styles.changeImageOverlay}>
@@ -163,8 +163,8 @@ export default function AddBookScreen() {
               </View>
             )}
           </TouchableOpacity>
-          {errors.coverUrl && (
-            <Text style={styles.errorText}>{errors.coverUrl}</Text>
+          {errors.cover_url && (
+            <Text style={styles.errorText}>{errors.cover_url}</Text>
           )}
         </View>
 

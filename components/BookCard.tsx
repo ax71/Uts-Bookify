@@ -24,7 +24,7 @@ export default function BookCard({ book }: BookCardProps) {
       onPress={() => router.push(`/book/${book.id}`)}
       activeOpacity={0.7}
     >
-      <Image source={{ uri: book.coverUrl }} style={styles.cover} />
+      <Image source={{ uri: book.cover_url }} style={styles.cover} />
       <View style={styles.info}>
         <Text
           style={[styles.title, isDark && styles.textDark]}

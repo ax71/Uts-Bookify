@@ -1,8 +1,10 @@
 import { Category } from "@/type";
 import { Ionicons } from "@expo/vector-icons";
+import * as Clipboard from "expo-clipboard";
 import { useRouter } from "expo-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
+  Alert,
   RefreshControl,
   ScrollView,
   StyleSheet,
@@ -37,9 +39,36 @@ export default function HomeScreen() {
     setRefreshing(false);
   };
 
+  useEffect(() => {
+    checkDeferredPromo();
+  }, []);
+
+  const checkDeferredPromo = async () => {
+    const clipboardContent = await Clipboard.getStringAsync();
+    if (clipboardContent.startsWith("MYBOOK_PROMO_")) {
+      // Bersihkan kode uniknya, ambil ID bukunya saja
+      // Contoh: "MYBOOK_PROMO_buku-react-native" -> jadi "buku-react-native"
+      const bookId = clipboardContent.replace("MYBOOK_PROMO_", "");
+
+      Alert.alert(
+        "🎁 Kejutan!",
+        "Kamu menginstall aplikasi lewat link promo. Mau buka bukunya sekarang?",
+        [
+          { text: "Nanti Aja", style: "cancel" },
+          {
+            text: "Buka Sekarang",
+            onPress: async () => {
+              await Clipboard.setStringAsync("");
+              router.push(`/book/${bookId}`);
+            },
+          },
+        ]
+      );
+    }
+  };
+
   return (
     <View style={[styles.container, isDark && styles.containerDark]}>
-      {/* Header */}
       <View style={[styles.header, isDark && styles.headerDark]}>
         <View>
           <Text style={[styles.greeting, isDark && styles.textDark]}>
@@ -61,7 +90,6 @@ export default function HomeScreen() {
         </TouchableOpacity>
       </View>
 
-      {/* Categories */}
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
@@ -97,7 +125,6 @@ export default function HomeScreen() {
         ))}
       </ScrollView>
 
-      {/* Books List */}
       <ScrollView
         style={styles.booksContainer}
         showsVerticalScrollIndicator={false}

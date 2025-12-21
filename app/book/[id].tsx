@@ -81,12 +81,9 @@ export default function BookDetailScreen() {
   return (
     <View style={[styles.container, isDark && styles.containerDark]}>
       <ScrollView showsVerticalScrollIndicator={false}>
-        {/* Book Cover */}
-        <Image source={{ uri: book.coverUrl }} style={styles.coverImage} />
+        <Image source={{ uri: book.cover_url }} style={styles.coverImage} />
 
-        {/* Book Info */}
         <View style={styles.content}>
-          {/* Category Badge */}
           <View
             style={[styles.categoryBadge, isDark && styles.categoryBadgeDark]}
           >
@@ -97,7 +94,6 @@ export default function BookDetailScreen() {
             </Text>
           </View>
 
-          {/* Title & Author */}
           <Text style={[styles.title, isDark && styles.textDark]}>
             {book.title}
           </Text>
@@ -105,7 +101,6 @@ export default function BookDetailScreen() {
             by {book.author}
           </Text>
 
-          {/* Price & Stock */}
           <View style={styles.priceRow}>
             <Text style={[styles.price, isDark && styles.priceDark]}>
               ${book.price.toFixed(2)}
@@ -124,7 +119,6 @@ export default function BookDetailScreen() {
             </View>
           </View>
 
-          {/* Description */}
           <View style={styles.section}>
             <Text style={[styles.sectionTitle, isDark && styles.textDark]}>
               Description
@@ -136,7 +130,6 @@ export default function BookDetailScreen() {
             </Text>
           </View>
 
-          {/* Quantity Selector */}
           <View style={styles.section}>
             <Text style={[styles.sectionTitle, isDark && styles.textDark]}>
               Quantity
@@ -176,7 +169,6 @@ export default function BookDetailScreen() {
             </View>
           </View>
 
-          {/* Action Buttons */}
           <View style={styles.actionButtons}>
             <TouchableOpacity
               style={[styles.editButton, isDark && styles.editButtonDark]}
@@ -210,7 +202,6 @@ export default function BookDetailScreen() {
         <View style={styles.bottomPadding} />
       </ScrollView>
 
-      {/* Add to Cart Button */}
       <View style={[styles.footer, isDark && styles.footerDark]}>
         <View style={styles.totalSection}>
           <Text style={[styles.totalLabel, isDark && styles.textSecondaryDark]}>

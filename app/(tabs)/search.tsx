@@ -39,7 +39,6 @@ export default function SearchScreen() {
           Search Books
         </Text>
 
-        {/* Search Input */}
         <View
           style={[styles.searchContainer, isDark && styles.searchContainerDark]}
         >
@@ -70,7 +69,6 @@ export default function SearchScreen() {
         </View>
       </View>
 
-      {/* Results */}
       <ScrollView
         style={styles.resultsContainer}
         showsVerticalScrollIndicator={false}
