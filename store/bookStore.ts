@@ -2,42 +2,7 @@ import { Book, CartItem, Transaction } from "@/type";
 import { create } from "zustand";
 import { storage } from "../utils/storage";
 
-// Dummy data
-const initialBooks: Book[] = [
-  {
-    id: "1",
-    title: "The Giant Kingdom",
-    author: "John Smith",
-    price: 29.99,
-    cover_url:
-      "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=400",
-    description: "Extracurricular reading / Growing motivational story book",
-    category: "Child",
-    stock: 261,
-  },
-  {
-    id: "2",
-    title: "Bear's Wish",
-    author: "Emily Brown",
-    price: 24.99,
-    cover_url:
-      "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=400",
-    description: "Extracurricular reading / Child education story",
-    category: "Child",
-    stock: 261,
-  },
-  {
-    id: "3",
-    title: "Animal Adventures",
-    author: "Michael Green",
-    price: 34.99,
-    cover_url:
-      "https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=400",
-    description: "Extracurricular reading / Growing motivational story book",
-    category: "Child",
-    stock: 261,
-  },
-];
+// Note: Initial data should be seeded directly in Supabase database
 
 interface BookStore {
   books: Book[];
@@ -70,47 +35,44 @@ export const useBookStore = create<BookStore>((set, get) => ({
   transactions: [],
   isLoading: false,
 
-  // Initialize books from storage or use dummy data
+  // Initialize books from Supabase
   initializeBooks: async () => {
     set({ isLoading: true });
-    const storedBooks = await storage.getBooks();
-
-    if (storedBooks.length === 0) {
-      // If no books in storage, use initial dummy data
-      await storage.saveBooks(initialBooks);
-      set({ books: initialBooks, isLoading: false });
-    } else {
-      set({ books: storedBooks, isLoading: false });
-    }
+    const books = await storage.getBooks();
+    set({ books, isLoading: false });
   },
 
   addBook: async (bookData) => {
-    const newBook: Book = {
-      ...bookData,
-      id: Date.now().toString(),
-    };
+    const newBook = await storage.addBook(bookData);
 
-    const updatedBooks = [...get().books, newBook];
-    await storage.saveBooks(updatedBooks);
-    set({ books: updatedBooks });
+    if (newBook) {
+      const updatedBooks = [...get().books, newBook];
+      set({ books: updatedBooks });
+    }
   },
 
   updateBook: async (id, bookData) => {
-    const updatedBooks = get().books.map((book) =>
-      book.id === id ? { ...book, ...bookData } : book
-    );
-    await storage.saveBooks(updatedBooks);
-    set({ books: updatedBooks });
+    const success = await storage.updateBook(id, bookData);
+
+    if (success) {
+      const updatedBooks = get().books.map((book) =>
+        book.id === id ? { ...book, ...bookData } : book
+      );
+      set({ books: updatedBooks });
+    }
   },
 
   deleteBook: async (id) => {
-    const updatedBooks = get().books.filter((book) => book.id !== id);
-    await storage.saveBooks(updatedBooks);
-    set({ books: updatedBooks });
+    const success = await storage.deleteBook(id);
 
-    // Remove from cart if exists
-    const updatedCart = get().cart.filter((item) => item.bookId !== id);
-    set({ cart: updatedCart });
+    if (success) {
+      const updatedBooks = get().books.filter((book) => book.id !== id);
+      set({ books: updatedBooks });
+
+      // Remove from cart if exists
+      const updatedCart = get().cart.filter((item) => item.bookId !== id);
+      set({ cart: updatedCart });
+    }
   },
 
   getBookById: (id) => {
@@ -170,8 +132,7 @@ export const useBookStore = create<BookStore>((set, get) => ({
 
     if (cart.length === 0) return;
 
-    const transaction: Transaction = {
-      id: Date.now().toString(),
+    const transactionData: Omit<Transaction, "id"> = {
       items: cart.map((item) => {
         const book = books.find((b) => b.id === item.bookId)!;
         return { book, quantity: item.quantity };
@@ -180,10 +141,12 @@ export const useBookStore = create<BookStore>((set, get) => ({
       date: new Date().toISOString(),
     };
 
-    const updatedTransactions = [transaction, ...transactions];
-    await storage.saveTransactions(updatedTransactions);
+    const newTransaction = await storage.addTransaction(transactionData);
 
-    set({ transactions: updatedTransactions, cart: [] });
+    if (newTransaction) {
+      const updatedTransactions = [newTransaction, ...transactions];
+      set({ transactions: updatedTransactions, cart: [] });
+    }
   },
 
   loadTransactions: async () => {

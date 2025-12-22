@@ -15,7 +15,12 @@ export default function RootLayout() {
   const loadTransactions = useBookStore((state) => state.loadTransactions);
 
   useEffect(() => {
-    (Airbridge as any).init("mybookify", "a63366d4c47b4a99b5a9c2fab6baa429");
+    // Check if Airbridge is defined before calling init
+    if (Airbridge && (Airbridge as any).init) {
+      (Airbridge as any).init("mybookify", "a63366d4c47b4a99b5a9c2fab6baa429");
+    } else {
+      console.log("Airbridge module not found (Running in Expo Go?)");
+    }
   }, []);
 
   useEffect(() => {

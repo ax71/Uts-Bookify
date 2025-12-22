@@ -18,7 +18,7 @@ Bookify adalah aplikasi mobile toko buku yang dikembangkan menggunakan React Nat
 - **Expo Router**: Navigasi berbasis file untuk aplikasi Expo
 - **Zustand**: Manajemen state yang ringan dan efisien
 - **React Native Paper**: Komponen UI Material Design
-- **AsyncStorage**: Penyimpanan data lokal
+- **Supabase**: Backend-as-a-Service untuk database dan autentikasi
 
 ## 📋 Prasyarat
 
@@ -44,7 +44,25 @@ Bookify adalah aplikasi mobile toko buku yang dikembangkan menggunakan React Nat
    yarn install
    ```
 
-3. Jalankan aplikasi
+3. Setup Supabase
+
+   a. Buat project di [Supabase](https://supabase.com)
+
+   b. Buat file `.env.local` dan isi dengan kredensial Supabase Anda:
+
+   ```env
+   EXPO_PUBLIC_SUPABASE_URL=your-project-url
+   EXPO_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+   ```
+
+   c. Jalankan script SQL di Supabase SQL Editor:
+
+   - Buka file `supabase-setup.sql`
+   - Copy seluruh isi file
+   - Paste dan jalankan di Supabase SQL Editor
+   - Ini akan membuat tabel dan mengisi data awal
+
+4. Jalankan aplikasi
 
    ```bash
    npm start
@@ -52,7 +70,7 @@ Bookify adalah aplikasi mobile toko buku yang dikembangkan menggunakan React Nat
    yarn start
    ```
 
-4. Pilih platform untuk menjalankan aplikasi:
+5. Pilih platform untuk menjalankan aplikasi:
    - Tekan `a` untuk Android
    - Tekan `i` untuk iOS
    - Tekan `w` untuk web

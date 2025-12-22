@@ -1,56 +1,129 @@
+import { supabase } from "@/lib/supabase";
 import { Book, Transaction } from "@/type";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-
-const BOOKS_KEY = "@bookify_books";
-const TRANSACTIONS_KEY = "@bookify_transactions";
 
 export const storage = {
   // Books
   async getBooks(): Promise<Book[]> {
     try {
-      const data = await AsyncStorage.getItem(BOOKS_KEY);
-      return data ? JSON.parse(data) : [];
+      const { data, error } = await supabase
+        .from("books")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        console.error("Error getting books:", error);
+        return [];
+      }
+
+      return data || [];
     } catch (error) {
       console.error("Error getting books:", error);
       return [];
     }
   },
 
-  async saveBooks(books: Book[]): Promise<void> {
+  async addBook(book: Omit<Book, "id">): Promise<Book | null> {
     try {
-      await AsyncStorage.setItem(BOOKS_KEY, JSON.stringify(books));
+      const { data, error } = await supabase
+        .from("books")
+        .insert([book])
+        .select()
+        .single();
+
+      if (error) {
+        console.error("Error adding book:", error);
+        return null;
+      }
+
+      return data;
     } catch (error) {
-      console.error("Error saving books:", error);
+      console.error("Error adding book:", error);
+      return null;
+    }
+  },
+
+  async updateBook(id: string, book: Partial<Book>): Promise<boolean> {
+    try {
+      const { error } = await supabase.from("books").update(book).eq("id", id);
+
+      if (error) {
+        console.error("Error updating book:", error);
+        return false;
+      }
+
+      return true;
+    } catch (error) {
+      console.error("Error updating book:", error);
+      return false;
+    }
+  },
+
+  async deleteBook(id: string): Promise<boolean> {
+    try {
+      const { error } = await supabase.from("books").delete().eq("id", id);
+
+      if (error) {
+        console.error("Error deleting book:", error);
+        return false;
+      }
+
+      return true;
+    } catch (error) {
+      console.error("Error deleting book:", error);
+      return false;
     }
   },
 
   // Transactions
   async getTransactions(): Promise<Transaction[]> {
     try {
-      const data = await AsyncStorage.getItem(TRANSACTIONS_KEY);
-      return data ? JSON.parse(data) : [];
+      const { data, error } = await supabase
+        .from("transactions")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        console.error("Error getting transactions:", error);
+        return [];
+      }
+
+      return data || [];
     } catch (error) {
       console.error("Error getting transactions:", error);
       return [];
     }
   },
 
-  async saveTransactions(transactions: Transaction[]): Promise<void> {
+  async addTransaction(
+    transaction: Omit<Transaction, "id">
+  ): Promise<Transaction | null> {
     try {
-      await AsyncStorage.setItem(
-        TRANSACTIONS_KEY,
-        JSON.stringify(transactions)
-      );
-    } catch (error) {
-      console.error("Error saving transactions:", error);
-    }
-  },
+      const { data, error } = await supabase
+        .from("transactions")
+        .insert([
+          {
+            items: transaction.items,
+            total_price: transaction.totalPrice,
+          },
+        ])
+        .select()
+        .single();
 
-  async clearAll(): Promise<void> {
-    try {
-      await AsyncStorage.multiRemove([BOOKS_KEY, TRANSACTIONS_KEY]);
+      if (error) {
+        console.error("Error adding transaction:", error);
+        return null;
+      }
+
+      // Map Supabase response back to Transaction type
+      return {
+        id: data.id,
+        items: data.items,
+        totalPrice: data.total_price,
+        date: data.created_at,
+      };
     } catch (error) {
-      console.error("Error clearing storage:", error);
+      console.error("Error adding transaction:", error);
+      return null;
     }
   },
 };
