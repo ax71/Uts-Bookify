@@ -33,7 +33,6 @@ export default function SearchScreen() {
 
   return (
     <View style={[styles.container, isDark && styles.containerDark]}>
-      {/* Header */}
       <View style={[styles.header, isDark && styles.headerDark]}>
         <Text style={[styles.title, isDark && styles.textDark]}>
           Search Books

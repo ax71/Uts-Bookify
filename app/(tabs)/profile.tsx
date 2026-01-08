@@ -10,7 +10,6 @@ import {
   View,
 } from "react-native";
 import { useBookStore } from "../../store/bookStore";
-import { storage } from "../../utils/storage";
 
 export default function ProfileScreen() {
   const colorScheme = useColorScheme();
@@ -21,7 +20,7 @@ export default function ProfileScreen() {
   const transactions = useBookStore((state) => state.transactions);
   const initializeBooks = useBookStore((state) => state.initializeBooks);
 
-  const totalSpent = transactions.reduce((sum, t) => sum + t.totalPrice, 0);
+  const totalSpent = transactions.reduce((sum, t) => sum + t.total_price, 0);
   const totalPurchases = transactions.reduce(
     (sum, t) => sum + t.items.reduce((s, i) => s + i.quantity, 0),
     0
@@ -37,7 +36,6 @@ export default function ProfileScreen() {
           text: "Reset",
           style: "destructive",
           onPress: async () => {
-            await storage.clearAll();
             await initializeBooks();
             Alert.alert("Success", "All data has been reset.");
           },
@@ -66,7 +64,6 @@ export default function ProfileScreen() {
       </View>
 
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-        {/* Statistics */}
         <View style={styles.section}>
           <Text style={[styles.sectionTitle, isDark && styles.textDark]}>
             Statistics
@@ -139,7 +136,6 @@ export default function ProfileScreen() {
           </View>
         </View>
 
-        {/* Menu Items */}
         <View style={styles.section}>
           <Text style={[styles.sectionTitle, isDark && styles.textDark]}>
             Menu
@@ -205,29 +201,6 @@ export default function ProfileScreen() {
             </Text>
           </View>
         </View>
-
-        {/* Danger Zone * sekarang masih belum diperlukan/}
-        {/* <View style={styles.section}>
-          <Text style={[styles.sectionTitle, isDark && styles.textDark]}>
-            Danger Zone
-          </Text>
-
-          <TouchableOpacity
-            style={[
-              styles.menuItem,
-              styles.dangerItem,
-              isDark && styles.dangerItemDark,
-            ]}
-            onPress={handleResetData}
-          >
-            <View style={styles.menuItemLeft}>
-              <Ionicons name="trash-outline" size={24} color="#ff4444" />
-              <Text style={styles.dangerText}>Reset All Data</Text>
-            </View>
-            <Ionicons name="chevron-forward" size={24} color="#ff4444" />
-          </TouchableOpacity>
-        </View> */}
-
         <View style={styles.bottomPadding} />
       </ScrollView>
     </View>

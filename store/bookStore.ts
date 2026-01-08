@@ -2,8 +2,6 @@ import { Book, CartItem, Transaction } from "@/type";
 import { create } from "zustand";
 import { storage } from "../utils/storage";
 
-// Note: Initial data should be seeded directly in Supabase database
-
 interface BookStore {
   books: Book[];
   cart: CartItem[];
@@ -132,13 +130,16 @@ export const useBookStore = create<BookStore>((set, get) => ({
 
     if (cart.length === 0) return;
 
-    const transactionData: Omit<Transaction, "id"> = {
+    const transactionData = {
       items: cart.map((item) => {
         const book = books.find((b) => b.id === item.bookId)!;
-        return { book, quantity: item.quantity };
+        return {
+          book_id: book.id,
+          quantity: item.quantity,
+          price: book.price,
+        };
       }),
       totalPrice: get().getCartTotal(),
-      date: new Date().toISOString(),
     };
 
     const newTransaction = await storage.addTransaction(transactionData);

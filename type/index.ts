@@ -14,14 +14,21 @@ export interface CartItem {
   quantity: number;
 }
 
+export interface TransactionItem {
+  id: string;
+  transaction_id: string;
+  book_id: string;
+  quantity: number;
+  price_at_purchase: number;
+  created_at: string;
+  book?: Book; // Populated when fetching with join
+}
+
 export interface Transaction {
   id: string;
-  items: {
-    book: Book;
-    quantity: number;
-  }[];
-  totalPrice: number;
-  date: string;
+  total_price: number;
+  created_at: string;
+  items: TransactionItem[]; // Populated when fetching with join
 }
 
 export type Category = "All" | "Child" | "Education" | "Technology";

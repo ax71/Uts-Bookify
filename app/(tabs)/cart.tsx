@@ -146,7 +146,6 @@ export default function CartScreen() {
                 </View>
 
                 <View style={styles.rightSection}>
-                  {/* Quantity Controls */}
                   <View style={styles.quantityContainer}>
                     <TouchableOpacity
                       style={[
@@ -185,7 +184,6 @@ export default function CartScreen() {
                     </TouchableOpacity>
                   </View>
 
-                  {/* Remove Button */}
                   <TouchableOpacity
                     style={styles.removeButton}
                     onPress={() =>
@@ -200,7 +198,6 @@ export default function CartScreen() {
             <View style={styles.bottomPadding} />
           </ScrollView>
 
-          {/* Checkout Section */}
           <View
             style={[
               styles.checkoutSection,

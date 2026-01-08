@@ -84,7 +84,7 @@ export default function TransactionsScreen() {
                         isDark && styles.textSecondaryDark,
                       ]}
                     >
-                      {formatDate(transaction.date)}
+                      {formatDate(transaction.created_at)}
                     </Text>
                   </View>
                 </View>
@@ -94,49 +94,50 @@ export default function TransactionsScreen() {
                     isDark && styles.transactionTotalDark,
                   ]}
                 >
-                  ${transaction.totalPrice.toFixed(2)}
+                  ${transaction.total_price.toFixed(2)}
                 </Text>
               </View>
 
               <View style={styles.itemsList}>
-                {transaction.items.map((item, index) => (
-                  <View key={index} style={styles.itemRow}>
-                    <Image
-                      source={{ uri: item.book.cover_url }}
-                      style={styles.itemCover}
-                    />
-                    <View style={styles.itemDetails}>
+                {transaction.items &&
+                  transaction.items.map((item, index) => (
+                    <View key={item.id || index} style={styles.itemRow}>
+                      <Image
+                        source={{ uri: item.book?.cover_url }}
+                        style={styles.itemCover}
+                      />
+                      <View style={styles.itemDetails}>
+                        <Text
+                          style={[styles.itemTitle, isDark && styles.textDark]}
+                          numberOfLines={1}
+                        >
+                          {item.book?.title}
+                        </Text>
+                        <Text
+                          style={[
+                            styles.itemAuthor,
+                            isDark && styles.textSecondaryDark,
+                          ]}
+                          numberOfLines={1}
+                        >
+                          {item.book?.author}
+                        </Text>
+                        <Text
+                          style={[
+                            styles.itemPrice,
+                            isDark && styles.textSecondaryDark,
+                          ]}
+                        >
+                          ${item.price_at_purchase.toFixed(2)} x {item.quantity}
+                        </Text>
+                      </View>
                       <Text
-                        style={[styles.itemTitle, isDark && styles.textDark]}
-                        numberOfLines={1}
+                        style={[styles.itemSubtotal, isDark && styles.textDark]}
                       >
-                        {item.book.title}
-                      </Text>
-                      <Text
-                        style={[
-                          styles.itemAuthor,
-                          isDark && styles.textSecondaryDark,
-                        ]}
-                        numberOfLines={1}
-                      >
-                        {item.book.author}
-                      </Text>
-                      <Text
-                        style={[
-                          styles.itemPrice,
-                          isDark && styles.textSecondaryDark,
-                        ]}
-                      >
-                        ${item.book.price.toFixed(2)} x {item.quantity}
+                        ${(item.price_at_purchase * item.quantity).toFixed(2)}
                       </Text>
                     </View>
-                    <Text
-                      style={[styles.itemSubtotal, isDark && styles.textDark]}
-                    >
-                      ${(item.book.price * item.quantity).toFixed(2)}
-                    </Text>
-                  </View>
-                ))}
+                  ))}
               </View>
 
               <View
@@ -157,10 +158,10 @@ export default function TransactionsScreen() {
                   <Text
                     style={[styles.summaryValue, isDark && styles.textDark]}
                   >
-                    {transaction.items.reduce(
+                    {transaction.items?.reduce(
                       (sum, item) => sum + item.quantity,
                       0
-                    )}
+                    ) || 0}
                   </Text>
                 </View>
                 <View style={styles.summaryRow}>
@@ -180,7 +181,7 @@ export default function TransactionsScreen() {
                       isDark && styles.totalValueDark,
                     ]}
                   >
-                    ${transaction.totalPrice.toFixed(2)}
+                    ${transaction.total_price.toFixed(2)}
                   </Text>
                 </View>
               </View>

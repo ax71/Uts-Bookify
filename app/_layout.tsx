@@ -1,5 +1,6 @@
 import Airbridge from "airbridge-react-native-sdk";
-import { Stack } from "expo-router";
+import * as Linking from "expo-linking";
+import { Stack, useRouter } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import { useColorScheme } from "react-native";
@@ -10,16 +11,36 @@ SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
+  const router = useRouter();
 
   const initializeBooks = useBookStore((state) => state.initializeBooks);
   const loadTransactions = useBookStore((state) => state.loadTransactions);
 
   useEffect(() => {
-    // Check if Airbridge is defined before calling init
     if (Airbridge && (Airbridge as any).init) {
       (Airbridge as any).init("mybookify", "a63366d4c47b4a99b5a9c2fab6baa429");
+
+      (Airbridge as any).setDeeplinkListener((deeplink: string) => {
+        console.log("🔥 Airbridge Link Diterima:", deeplink);
+
+        if (deeplink) {
+          try {
+            const url = Linking.parse(deeplink);
+
+            if (url.path) {
+              setTimeout(() => {
+                router.push(url.path as any);
+              }, 500);
+            }
+          } catch (err) {
+            console.error("Gagal memproses deeplink:", err);
+          }
+        }
+      });
     } else {
-      console.log("Airbridge module not found (Running in Expo Go?)");
+      console.log(
+        "⚠️ Airbridge module not found. Pastikan Anda menggunakan Development Build, bukan Expo Go standar."
+      );
     }
   }, []);
 
@@ -53,16 +74,6 @@ export default function RootLayout() {
             presentation: "card",
           }}
         />
-
-        <Stack.Screen
-          name="book/add"
-          options={{
-            headerShown: true,
-            title: "Add New Book",
-            presentation: "modal",
-          }}
-        />
-
         <Stack.Screen
           name="book/edit/[id]"
           options={{
@@ -71,7 +82,6 @@ export default function RootLayout() {
             presentation: "modal",
           }}
         />
-
         <Stack.Screen
           name="transactions"
           options={{

@@ -1,10 +1,8 @@
 import { Category } from "@/type";
 import { Ionicons } from "@expo/vector-icons";
-import * as Clipboard from "expo-clipboard";
 import { useRouter } from "expo-router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
-  Alert,
   RefreshControl,
   ScrollView,
   StyleSheet,
@@ -39,34 +37,6 @@ export default function HomeScreen() {
     setRefreshing(false);
   };
 
-  useEffect(() => {
-    checkDeferredPromo();
-  }, []);
-
-  const checkDeferredPromo = async () => {
-    const clipboardContent = await Clipboard.getStringAsync();
-    if (clipboardContent.startsWith("MYBOOK_PROMO_")) {
-      // Bersihkan kode uniknya, ambil ID bukunya saja
-      // Contoh: "MYBOOK_PROMO_buku-react-native" -> jadi "buku-react-native"
-      const bookId = clipboardContent.replace("MYBOOK_PROMO_", "");
-
-      Alert.alert(
-        "🎁 Kejutan!",
-        "Kamu menginstall aplikasi lewat link promo. Mau buka bukunya sekarang?",
-        [
-          { text: "Nanti Aja", style: "cancel" },
-          {
-            text: "Buka Sekarang",
-            onPress: async () => {
-              await Clipboard.setStringAsync("");
-              router.push(`/book/${bookId}`);
-            },
-          },
-        ]
-      );
-    }
-  };
-
   return (
     <View style={[styles.container, isDark && styles.containerDark]}>
       <View style={[styles.header, isDark && styles.headerDark]}>
@@ -78,16 +48,6 @@ export default function HomeScreen() {
             Discover your next great book
           </Text>
         </View>
-        <TouchableOpacity
-          style={[styles.addButton, isDark && styles.addButtonDark]}
-          onPress={() => router.push("/book/add")}
-        >
-          <Ionicons
-            name="add"
-            size={24}
-            color={isDark ? "#FFD700" : "#FF6B35"}
-          />
-        </TouchableOpacity>
       </View>
 
       <ScrollView

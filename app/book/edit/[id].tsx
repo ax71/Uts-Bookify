@@ -149,7 +149,6 @@ export default function EditBookScreen() {
   return (
     <View style={[styles.container, isDark && styles.containerDark]}>
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-        {/* Cover Image Picker */}
         <View style={styles.formGroup}>
           <Text style={[styles.label, isDark && styles.labelDark]}>
             Cover Image *
@@ -205,7 +204,6 @@ export default function EditBookScreen() {
           )}
         </View>
 
-        {/* Title */}
         <View style={styles.formGroup}>
           <Text style={[styles.label, isDark && styles.labelDark]}>
             Title *
@@ -227,7 +225,6 @@ export default function EditBookScreen() {
           {errors.title && <Text style={styles.errorText}>{errors.title}</Text>}
         </View>
 
-        {/* Author */}
         <View style={styles.formGroup}>
           <Text style={[styles.label, isDark && styles.labelDark]}>
             Author *
@@ -251,7 +248,6 @@ export default function EditBookScreen() {
           )}
         </View>
 
-        {/* Price */}
         <View style={styles.formGroup}>
           <Text style={[styles.label, isDark && styles.labelDark]}>
             Price *
@@ -274,7 +270,6 @@ export default function EditBookScreen() {
           {errors.price && <Text style={styles.errorText}>{errors.price}</Text>}
         </View>
 
-        {/* Category */}
         <View style={styles.formGroup}>
           <Text style={[styles.label, isDark && styles.labelDark]}>
             Category *
@@ -315,7 +310,6 @@ export default function EditBookScreen() {
           </ScrollView>
         </View>
 
-        {/* Stock */}
         <View style={styles.formGroup}>
           <Text style={[styles.label, isDark && styles.labelDark]}>
             Stock *
@@ -338,7 +332,6 @@ export default function EditBookScreen() {
           {errors.stock && <Text style={styles.errorText}>{errors.stock}</Text>}
         </View>
 
-        {/* Description */}
         <View style={styles.formGroup}>
           <Text style={[styles.label, isDark && styles.labelDark]}>
             Description *
@@ -369,7 +362,6 @@ export default function EditBookScreen() {
         <View style={styles.bottomPadding} />
       </ScrollView>
 
-      {/* Submit Button */}
       <View style={[styles.footer, isDark && styles.footerDark]}>
         <TouchableOpacity
           style={[styles.cancelButton, isDark && styles.cancelButtonDark]}
