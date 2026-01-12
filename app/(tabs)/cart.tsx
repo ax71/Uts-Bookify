@@ -45,7 +45,7 @@ export default function CartScreen() {
           onPress: async () => {
             await checkout();
             Alert.alert(
-              "✅ Purchase Successful!",
+              "Purchase Successful!",
               "Thank you for your purchase. Check your transaction history.",
               [
                 {

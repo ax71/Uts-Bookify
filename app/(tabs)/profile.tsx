@@ -46,7 +46,6 @@ export default function ProfileScreen() {
 
   return (
     <View style={[styles.container, isDark && styles.containerDark]}>
-      {/* Header */}
       <View style={[styles.header, isDark && styles.headerDark]}>
         <View style={styles.avatarContainer}>
           <View style={[styles.avatar, isDark && styles.avatarDark]}>

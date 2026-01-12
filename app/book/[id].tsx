@@ -50,7 +50,7 @@ export default function BookDetailScreen() {
   const handleAddToCart = () => {
     addToCart(book.id, quantity);
     Alert.alert(
-      "✅ Added to Cart",
+      "Added to Cart",
       `${quantity} x "${book.title}" added to your cart.`,
       [
         { text: "Continue Shopping", onPress: () => router.back() },

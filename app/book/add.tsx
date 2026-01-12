@@ -1,9 +1,11 @@
+import { supabase } from "@/lib/supabase";
 import { Category } from "@/type";
 import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import {
+  ActivityIndicator,
   Alert,
   Image,
   ScrollView,
@@ -24,6 +26,7 @@ export default function AddBookScreen() {
   const isDark = colorScheme === "dark";
 
   const addBook = useBookStore((state) => state.addBook);
+  const [isUploading, setIsUploading] = useState(false);
 
   const [formData, setFormData] = useState({
     title: "",
@@ -37,8 +40,45 @@ export default function AddBookScreen() {
 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
+  const uploadImageToSupabase = async (uri: string): Promise<string | null> => {
+    try {
+      const response = await fetch(uri);
+      const blob = await response.blob();
+
+      let ext = "jpg";
+      if (blob.type === "image/png") ext = "png";
+      if (blob.type === "image/jpeg" || blob.type === "image/jpg") ext = "jpg";
+      if (blob.type === "image/webp") ext = "webp";
+
+      const fileName = `${Date.now()}.${ext}`;
+      const filePath = fileName;
+
+      console.log("Memulai upload file:", filePath);
+
+      const { data, error: uploadError } = await supabase.storage
+        .from("images")
+        .upload(filePath, blob, {
+          contentType: blob.type,
+          upsert: true,
+        });
+
+      if (uploadError) {
+        throw uploadError;
+      }
+
+      const { data: urlData } = supabase.storage
+        .from("images")
+        .getPublicUrl(filePath);
+
+      return urlData.publicUrl;
+    } catch (error) {
+      console.error("Upload error detail:", error);
+      Alert.alert("Upload Failed", "Could not upload image to server.");
+      return null;
+    }
+  };
+
   const pickImage = async () => {
-    // Request permission
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
     if (status !== "granted") {
@@ -49,12 +89,11 @@ export default function AddBookScreen() {
       return;
     }
 
-    // Launch image picker
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       aspect: [3, 4],
-      quality: 0.8,
+      quality: 0.5,
     });
 
     if (!result.canceled) {
@@ -90,12 +129,31 @@ export default function AddBookScreen() {
       return;
     }
 
+    setIsUploading(true);
+
     try {
+      let finalCoverUrl = formData.cover_url;
+
+      console.log("🚀 Submit dimulai. URL Awal:", finalCoverUrl);
+      if (!finalCoverUrl.startsWith("http")) {
+        console.log("⚡ Mendeteksi file lokal, melakukan upload...");
+        const uploadedUrl = await uploadImageToSupabase(finalCoverUrl);
+
+        if (!uploadedUrl) {
+          setIsUploading(false);
+          Alert.alert("Error", "Gagal mendapatkan URL gambar. Coba lagi.");
+          return;
+        }
+
+        finalCoverUrl = uploadedUrl;
+        console.log("✅ URL Final untuk Database:", finalCoverUrl);
+      }
+
       await addBook({
         title: formData.title.trim(),
         author: formData.author.trim(),
         price: parseFloat(formData.price),
-        cover_url: formData.cover_url.trim(),
+        cover_url: finalCoverUrl,
         description: formData.description.trim(),
         category: formData.category,
         stock: parseInt(formData.stock),
@@ -105,14 +163,16 @@ export default function AddBookScreen() {
         { text: "OK", onPress: () => router.back() },
       ]);
     } catch (error) {
+      console.error("Submit Error:", error);
       Alert.alert("Error", "Failed to add book. Please try again.");
+    } finally {
+      setIsUploading(false);
     }
   };
 
   return (
     <View style={[styles.container, isDark && styles.containerDark]}>
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-        {/* Cover Image Picker */}
         <View style={styles.formGroup}>
           <Text style={[styles.label, isDark && styles.labelDark]}>
             Cover Image *
@@ -125,6 +185,7 @@ export default function AddBookScreen() {
               errors.cover_url && styles.inputError,
             ]}
             onPress={pickImage}
+            disabled={isUploading}
           >
             {formData.cover_url ? (
               <View style={styles.imagePreviewContainer}>
@@ -168,7 +229,6 @@ export default function AddBookScreen() {
           )}
         </View>
 
-        {/* Title */}
         <View style={styles.formGroup}>
           <Text style={[styles.label, isDark && styles.labelDark]}>
             Title *
@@ -190,7 +250,6 @@ export default function AddBookScreen() {
           {errors.title && <Text style={styles.errorText}>{errors.title}</Text>}
         </View>
 
-        {/* Author */}
         <View style={styles.formGroup}>
           <Text style={[styles.label, isDark && styles.labelDark]}>
             Author *
@@ -214,7 +273,6 @@ export default function AddBookScreen() {
           )}
         </View>
 
-        {/* Price */}
         <View style={styles.formGroup}>
           <Text style={[styles.label, isDark && styles.labelDark]}>
             Price *
@@ -237,7 +295,6 @@ export default function AddBookScreen() {
           {errors.price && <Text style={styles.errorText}>{errors.price}</Text>}
         </View>
 
-        {/* Category */}
         <View style={styles.formGroup}>
           <Text style={[styles.label, isDark && styles.labelDark]}>
             Category *
@@ -278,7 +335,6 @@ export default function AddBookScreen() {
           </ScrollView>
         </View>
 
-        {/* Stock */}
         <View style={styles.formGroup}>
           <Text style={[styles.label, isDark && styles.labelDark]}>
             Stock *
@@ -301,7 +357,6 @@ export default function AddBookScreen() {
           {errors.stock && <Text style={styles.errorText}>{errors.stock}</Text>}
         </View>
 
-        {/* Description */}
         <View style={styles.formGroup}>
           <Text style={[styles.label, isDark && styles.labelDark]}>
             Description *
@@ -332,11 +387,11 @@ export default function AddBookScreen() {
         <View style={styles.bottomPadding} />
       </ScrollView>
 
-      {/* Submit Button */}
       <View style={[styles.footer, isDark && styles.footerDark]}>
         <TouchableOpacity
           style={[styles.cancelButton, isDark && styles.cancelButtonDark]}
           onPress={() => router.back()}
+          disabled={isUploading}
         >
           <Text
             style={[
@@ -349,11 +404,22 @@ export default function AddBookScreen() {
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={[styles.submitButton, isDark && styles.submitButtonDark]}
+          style={[
+            styles.submitButton,
+            isDark && styles.submitButtonDark,
+            isUploading && { opacity: 0.7 },
+          ]}
           onPress={handleSubmit}
+          disabled={isUploading}
         >
-          <Ionicons name="checkmark" size={20} color="#fff" />
-          <Text style={styles.submitButtonText}>Add Book</Text>
+          {isUploading ? (
+            <ActivityIndicator color="#fff" />
+          ) : (
+            <>
+              <Ionicons name="checkmark" size={20} color="#fff" />
+              <Text style={styles.submitButtonText}>Add Book</Text>
+            </>
+          )}
         </TouchableOpacity>
       </View>
     </View>

@@ -67,7 +67,6 @@ export const useBookStore = create<BookStore>((set, get) => ({
       const updatedBooks = get().books.filter((book) => book.id !== id);
       set({ books: updatedBooks });
 
-      // Remove from cart if exists
       const updatedCart = get().cart.filter((item) => item.bookId !== id);
       set({ cart: updatedCart });
     }
@@ -77,7 +76,6 @@ export const useBookStore = create<BookStore>((set, get) => ({
     return get().books.find((book) => book.id === id);
   },
 
-  // Cart operations
   addToCart: (bookId, quantity) => {
     const cart = get().cart;
     const existingItem = cart.find((item) => item.bookId === bookId);
